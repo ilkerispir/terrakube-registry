@@ -11,8 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/terrakube-io/terrakube/registry-go/internal/git"
-	"github.com/terrakube-io/terrakube/registry-go/internal/utils"
+	"github.com/ilkerispir/terrakube-registry/internal/git"
+	"github.com/ilkerispir/terrakube-registry/internal/utils"
 )
 
 type AWSStorageService struct {

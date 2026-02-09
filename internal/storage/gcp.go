@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"cloud.google.com/go/storage"
-	"github.com/terrakube-io/terrakube/registry-go/internal/git"
-	"github.com/terrakube-io/terrakube/registry-go/internal/utils"
+	"github.com/ilkerispir/terrakube-registry/internal/git"
+	"github.com/ilkerispir/terrakube-registry/internal/utils"
 	"google.golang.org/api/option"
 )
 

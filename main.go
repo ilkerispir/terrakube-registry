@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/terrakube-io/terrakube/registry-go/internal/client"
-	"github.com/terrakube-io/terrakube/registry-go/internal/config"
-	"github.com/terrakube-io/terrakube/registry-go/internal/storage"
+	"github.com/ilkerispir/terrakube-registry/internal/client"
+	"github.com/ilkerispir/terrakube-registry/internal/config"
+	"github.com/ilkerispir/terrakube-registry/internal/storage"
 )
 
 func main() {

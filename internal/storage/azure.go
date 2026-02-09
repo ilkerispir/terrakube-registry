@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
-	"github.com/terrakube-io/terrakube/registry-go/internal/git"
-	"github.com/terrakube-io/terrakube/registry-go/internal/utils"
+	"github.com/ilkerispir/terrakube-registry/internal/git"
+	"github.com/ilkerispir/terrakube-registry/internal/utils"
 )
 
 type AzureStorageService struct {
