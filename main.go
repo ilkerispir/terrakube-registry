@@ -52,7 +52,7 @@ func main() {
 		})
 	})
 
-	apiClient := client.NewClient(cfg.AzBuilderApiUrl, cfg.PatSecret)
+	apiClient := client.NewClient(cfg.AzBuilderApiUrl, cfg.InternalSecret)
 
 	// Initialize Storage Service
 	var storageService storage.StorageService

@@ -2,12 +2,15 @@ package client
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type Client struct {
@@ -58,7 +61,27 @@ func (c *Client) ExecuteQuery(query string, variables map[string]interface{}) ([
 	}
 	req.Header.Set("Content-Type", "application/json")
 	if c.Token != "" {
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
+		// Generate JWT token
+		secret, err := base64.StdEncoding.DecodeString(c.Token)
+		if err == nil {
+			claims := jwt.MapClaims{
+				"iss":            "TerrakubeInternal",
+				"sub":            "TerrakubeInternal (TOKEN)",
+				"aud":            "TerrakubeInternal",
+				"email":          "no-reply@terrakube.io",
+				"email_verified": true,
+				"name":           "TerrakubeInternal Client",
+				"iat":            time.Now().Unix(),
+				"exp":            time.Now().Add(30 * 24 * time.Hour).Unix(),
+			}
+
+			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+			token.Header["typ"] = "JWT"
+			signedToken, err := token.SignedString(secret)
+			if err == nil {
+				req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", signedToken))
+			}
+		}
 	}
 
 	resp, err := c.HTTPClient.Do(req)
