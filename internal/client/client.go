@@ -20,10 +20,13 @@ type Client struct {
 }
 
 func NewClient(baseURL, token string) *Client {
-	// Ensure the base URL ends with /graphql
+	// Ensure the base URL ends with /graphql/api/v1
 	graphqlURL := baseURL
-	if !strings.HasSuffix(baseURL, "/graphql") {
-		graphqlURL = fmt.Sprintf("%s/graphql", strings.TrimRight(baseURL, "/"))
+	if !strings.HasSuffix(baseURL, "/graphql/api/v1") {
+		// Clean up any trailing slashes or /graphql suffix
+		base := strings.TrimRight(baseURL, "/")
+		base = strings.TrimSuffix(base, "/graphql")
+		graphqlURL = fmt.Sprintf("%s/graphql/api/v1", base)
 	}
 
 	return &Client{
