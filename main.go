@@ -163,6 +163,22 @@ func main() {
 		c.Status(http.StatusNoContent)
 	})
 
+	// Provide README URL
+	// Same as module download, but the path should be returned so the UI can download the README from the zip later, or maybe just point to the same zip?
+	// Terrakube UI usually expects X-Terraform-Get or it just tries to download it if it's a 204/200 OK.
+	r.GET("/terraform/readme/v1/:org/:name/:provider/:version/download", func(c *gin.Context) {
+		org := c.Param("org")
+		name := c.Param("name")
+		provider := c.Param("provider")
+		version := c.Param("version")
+
+		// The module search path logic gives the zip URL. The UI knows how to extract the README from the zip or we can just point it to the zip.
+		path := fmt.Sprintf("%s/terraform/modules/v1/download/%s/%s/%s/%s/module.zip", cfg.AzBuilderRegistry, org, name, provider, version)
+
+		c.Header("X-Terraform-Get", path)
+		c.Status(http.StatusNoContent)
+	})
+
 	// Download Module Zip (Actual File)
 	r.GET("/terraform/modules/v1/download/:org/:name/:provider/:version/module.zip", func(c *gin.Context) {
 		org := c.Param("org")

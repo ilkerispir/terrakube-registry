@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -15,8 +16,14 @@ type Client struct {
 }
 
 func NewClient(baseURL string) *Client {
+	// Ensure the base URL ends with /graphql
+	graphqlURL := baseURL
+	if !strings.HasSuffix(baseURL, "/graphql") {
+		graphqlURL = fmt.Sprintf("%s/graphql", strings.TrimRight(baseURL, "/"))
+	}
+
 	return &Client{
-		BaseURL: baseURL,
+		BaseURL: graphqlURL,
 		HTTPClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
