@@ -27,8 +27,8 @@ type Config struct {
 
 func LoadConfig() *Config {
 	return &Config{
-		Port:                getEnv("PORT", "8080"),
-		AzBuilderRegistry:   getEnv("AzBuilderRegistry", "http://localhost:8080"),
+		Port:                getEnv("PORT", "8075"),
+		AzBuilderRegistry:   getEnv("AzBuilderRegistry", "http://localhost:8075"),
 		AzBuilderApiUrl:     getEnv("AzBuilderApiUrl", "http://localhost:8081"),
 		RegistryStorageType: getEnv("RegistryStorageType", "AWS"),
 		AwsBucketName:       getEnv("AwsStorageBucketName", ""),

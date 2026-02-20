@@ -24,6 +24,16 @@ func main() {
 		})
 	})
 
+	// Actuator health endpoints for backward compatibility with Spring Boot probes
+	actuatorHealth := func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status": "UP",
+		})
+	}
+	r.GET("/actuator/health", actuatorHealth)
+	r.GET("/actuator/health/liveness", actuatorHealth)
+	r.GET("/actuator/health/readiness", actuatorHealth)
+
 	// Terraform Registry Service Discovery
 	r.GET("/.well-known/terraform.json", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

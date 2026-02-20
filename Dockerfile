@@ -17,6 +17,6 @@ WORKDIR /app
 
 COPY --from=builder /app/registry-go .
 
-EXPOSE 8080
+EXPOSE 8075
 
 CMD ["./registry-go"]
