@@ -15,6 +15,8 @@ type Config struct {
 	AwsAccessKey        string
 	AwsSecretKey        string
 	AwsEndpoint         string
+	// Authentication
+	PatSecret string
 	// Azure
 	AzureStorageAccountName   string
 	AzureStorageAccountKey    string
@@ -36,6 +38,7 @@ func LoadConfig() *Config {
 		AwsAccessKey:        getEnv("AwsStorageAccessKey", ""),
 		AwsSecretKey:        getEnv("AwsStorageSecretKey", ""),
 		AwsEndpoint:         getEnv("AwsEndpoint", ""),
+		PatSecret:           getEnv("PatSecret", ""),
 		// Azure
 		AzureStorageAccountName:   getEnv("AzureStorageAccountName", ""),
 		AzureStorageAccountKey:    getEnv("AzureStorageAccountKey", ""),

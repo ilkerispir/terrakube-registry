@@ -12,10 +12,11 @@ import (
 
 type Client struct {
 	BaseURL    string
+	Token      string
 	HTTPClient *http.Client
 }
 
-func NewClient(baseURL string) *Client {
+func NewClient(baseURL, token string) *Client {
 	// Ensure the base URL ends with /graphql
 	graphqlURL := baseURL
 	if !strings.HasSuffix(baseURL, "/graphql") {
@@ -24,6 +25,7 @@ func NewClient(baseURL string) *Client {
 
 	return &Client{
 		BaseURL: graphqlURL,
+		Token:   token,
 		HTTPClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
@@ -55,7 +57,9 @@ func (c *Client) ExecuteQuery(query string, variables map[string]interface{}) ([
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	// Add auth headers if needed...
+	if c.Token != "" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
+	}
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
