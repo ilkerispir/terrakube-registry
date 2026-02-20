@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/ilkerispir/terrakube-registry/internal/client"
 	"github.com/ilkerispir/terrakube-registry/internal/config"
@@ -16,6 +17,15 @@ func main() {
 	cfg := config.LoadConfig()
 
 	r := gin.Default()
+
+	// CORS Setup
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "X-Terraform-Get"},
+		ExposeHeaders:    []string{"Content-Length", "X-Terraform-Get", "Content-Disposition"},
+		AllowCredentials: true,
+	}))
 
 	// Health check
 	r.GET("/health", func(c *gin.Context) {
