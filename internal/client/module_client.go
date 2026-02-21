@@ -111,8 +111,12 @@ const getModuleQuery = `
                         }
                     }
                     ssh {
-                        sshType
-                        privateKey
+                        edges {
+                            node {
+                                sshType
+                                privateKey
+                            }
+                        }
                     }
                 }
             }
@@ -137,8 +141,12 @@ type ModuleDetails struct {
 		} `json:"edges"`
 	} `json:"vcs"`
 	Ssh *struct {
-		SshType    string `json:"sshType"`
-		PrivateKey string `json:"privateKey"`
+		Edges []struct {
+			Node struct {
+				SshType    string `json:"sshType"`
+				PrivateKey string `json:"privateKey"`
+			} `json:"node"`
+		} `json:"edges"`
 	} `json:"ssh"`
 }
 

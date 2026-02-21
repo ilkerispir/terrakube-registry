@@ -153,9 +153,10 @@ func main() {
 			} else {
 				log.Printf("Warning: Failed to fetch VCS token for VCS ID %s: %v", vcsNode.ID, err)
 			}
-		} else if moduleDetails.Ssh != nil {
-			vcsType = "SSH~" + moduleDetails.Ssh.SshType
-			accessToken = moduleDetails.Ssh.PrivateKey
+		} else if moduleDetails.Ssh != nil && len(moduleDetails.Ssh.Edges) > 0 {
+			sshNode := moduleDetails.Ssh.Edges[0].Node
+			vcsType = "SSH~" + sshNode.SshType
+			accessToken = sshNode.PrivateKey
 		}
 
 		path, err := storageService.SearchModule(org, name, provider, version, source, vcsType, accessToken, tagPrefix, folder)
