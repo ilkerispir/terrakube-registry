@@ -103,7 +103,6 @@ const getModuleQuery = `
                     folder
                     tagPrefix
                     vcs {
-                        vcsType
                         connectionType
                         accessToken
                         clientId
@@ -127,7 +126,6 @@ type ModuleDetails struct {
 	TagPrefix string `json:"tagPrefix"`
 	Vcs       *struct {
 		ID             string `json:"id"`
-		VcsType        string `json:"vcsType"`
 		ConnectionType string `json:"connectionType"`
 		AccessToken    string `json:"accessToken"`
 		ClientID       string `json:"clientId"`
