@@ -15,6 +15,7 @@ type Config struct {
 	AwsAccessKey        string
 	AwsSecretKey        string
 	AwsEndpoint         string
+	AwsEnableRoleAuth   bool
 	// Authentication
 	PatSecret      string
 	InternalSecret string
@@ -39,6 +40,7 @@ func LoadConfig() *Config {
 		AwsAccessKey:        getEnv("AwsStorageAccessKey", ""),
 		AwsSecretKey:        getEnv("AwsStorageSecretKey", ""),
 		AwsEndpoint:         getEnv("AwsEndpoint", ""),
+		AwsEnableRoleAuth:   getEnv("AwsEnableRoleAuth", "false") == "true",
 		PatSecret:           getEnv("PatSecret", ""),
 		InternalSecret:      getEnv("InternalSecret", ""),
 		// Azure

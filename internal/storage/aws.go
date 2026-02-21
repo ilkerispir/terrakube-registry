@@ -23,7 +23,7 @@ type AWSStorageService struct {
 	GitService git.GitService
 }
 
-func NewAWSStorageService(ctx context.Context, region, bucket, hostname, endpoint, accessKey, secretKey string) (*AWSStorageService, error) {
+func NewAWSStorageService(ctx context.Context, region, bucket, hostname, endpoint, accessKey, secretKey string, enableRoleAuth bool) (*AWSStorageService, error) {
 	// Custom resolver for endpoint if provided (e.g. MinIO)
 	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 		if endpoint != "" {
@@ -36,16 +36,20 @@ func NewAWSStorageService(ctx context.Context, region, bucket, hostname, endpoin
 		return aws.Endpoint{}, &aws.EndpointNotFoundError{}
 	})
 
-	cfg, err := config.LoadDefaultConfig(ctx,
-		config.WithRegion(region),
-		config.WithEndpointResolverWithOptions(customResolver),
-		config.WithCredentialsProvider(aws.CredentialsProviderFunc(func(ctx context.Context) (aws.Credentials, error) {
+	var cfgOptions []func(*config.LoadOptions) error
+	cfgOptions = append(cfgOptions, config.WithRegion(region))
+	cfgOptions = append(cfgOptions, config.WithEndpointResolverWithOptions(customResolver))
+
+	if !enableRoleAuth {
+		cfgOptions = append(cfgOptions, config.WithCredentialsProvider(aws.CredentialsProviderFunc(func(ctx context.Context) (aws.Credentials, error) {
 			return aws.Credentials{
 				AccessKeyID:     accessKey,
 				SecretAccessKey: secretKey,
 			}, nil
-		})),
-	)
+		})))
+	}
+
+	cfg, err := config.LoadDefaultConfig(ctx, cfgOptions...)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load SDK config: %v", err)
 	}

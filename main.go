@@ -68,6 +68,7 @@ func main() {
 			cfg.AwsEndpoint,
 			cfg.AwsAccessKey,
 			cfg.AwsSecretKey,
+			cfg.AwsEnableRoleAuth,
 		)
 	case "AZURE", "AzureStorageImpl":
 		storageService, err = storage.NewAzureStorageService(
