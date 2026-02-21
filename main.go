@@ -142,7 +142,7 @@ func main() {
 		accessToken := ""
 
 		if moduleDetails.Vcs != nil {
-			vcsType = moduleDetails.Vcs.ConnectionType
+			vcsType = moduleDetails.Vcs.VcsType
 			accessToken = moduleDetails.Vcs.AccessToken
 			// TODO: Handle OAuth/App Token logic if accessToken is empty but clientId present?
 			// The original Java code has complex logic for GitHub App tokens.
