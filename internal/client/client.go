@@ -65,7 +65,12 @@ func (c *Client) ExecuteQuery(query string, variables map[string]interface{}) ([
 	req.Header.Set("Content-Type", "application/json")
 	if c.Token != "" {
 		// Generate JWT token
-		secret, err := base64.StdEncoding.DecodeString(c.Token)
+		// Terrakube API expects BASE64URL without padding (Java's Decoders.BASE64URL returns standard byte[])
+		secret, err := base64.RawURLEncoding.DecodeString(c.Token)
+		if err != nil {
+			// Fallback to std encoding just in case
+			secret, err = base64.StdEncoding.DecodeString(c.Token)
+		}
 		if err == nil {
 			claims := jwt.MapClaims{
 				"iss":            "TerrakubeInternal",
