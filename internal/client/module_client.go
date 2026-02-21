@@ -103,14 +103,12 @@ const getModuleQuery = `
                     folder
                     tagPrefix
                     vcs {
-                        id
                         vcsType
                         connectionType
                         accessToken
                         clientId
                     }
                     ssh {
-                        id
                         sshType
                         privateKey
                     }
