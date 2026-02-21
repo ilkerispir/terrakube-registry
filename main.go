@@ -141,16 +141,17 @@ func main() {
 		vcsType := "PUBLIC"
 		accessToken := ""
 
-		if moduleDetails.Vcs != nil {
-			vcsType = moduleDetails.Vcs.VcsType
+		if moduleDetails.Vcs != nil && len(moduleDetails.Vcs.Edges) > 0 {
+			vcsNode := moduleDetails.Vcs.Edges[0].Node
+			vcsType = vcsNode.VcsType
 
 			// To get the accessToken, we must call the REST API: /api/v1/organization/{orgId}/vcs/{vcsId}
 			// For now, if we have an apiClient, we can implement GetVcsToken to fetch it.
-			token, err := apiClient.GetVcsToken(orgId, moduleDetails.Vcs.ID)
+			token, err := apiClient.GetVcsToken(orgId, vcsNode.ID)
 			if err == nil {
 				accessToken = token
 			} else {
-				log.Printf("Warning: Failed to fetch VCS token for VCS ID %s: %v", moduleDetails.Vcs.ID, err)
+				log.Printf("Warning: Failed to fetch VCS token for VCS ID %s: %v", vcsNode.ID, err)
 			}
 		} else if moduleDetails.Ssh != nil {
 			vcsType = "SSH~" + moduleDetails.Ssh.SshType

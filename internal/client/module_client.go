@@ -103,8 +103,12 @@ const getModuleQuery = `
                     folder
                     tagPrefix
                     vcs {
-                        id
-                        clientId
+                        edges {
+                            node {
+                                id
+                                clientId
+                            }
+                        }
                     }
                     ssh {
                         sshType
@@ -124,9 +128,13 @@ type ModuleDetails struct {
 	Folder    string `json:"folder"`
 	TagPrefix string `json:"tagPrefix"`
 	Vcs       *struct {
-		ID       string `json:"id"`
-		VcsType  string `json:"vcsType"`
-		ClientID string `json:"clientId"`
+		Edges []struct {
+			Node struct {
+				ID       string `json:"id"`
+				VcsType  string `json:"vcsType"`
+				ClientID string `json:"clientId"`
+			} `json:"node"`
+		} `json:"edges"`
 	} `json:"vcs"`
 	Ssh *struct {
 		SshType    string `json:"sshType"`
