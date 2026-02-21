@@ -99,7 +99,7 @@ const getModuleQuery = `
             edges{
                 node{
                     id
-                    source // This might be "source" or "cascadedSource" depending on schema
+                    source 
                     folder
                     tagPrefix
                     vcs {
