@@ -127,7 +127,7 @@ func main() {
 		version := c.Param("version")
 
 		// Get Module Details for Source/VCS info
-		moduleDetails, err := apiClient.GetModule(org, name, provider)
+		moduleDetails, orgId, err := apiClient.GetModule(org, name, provider)
 		if err != nil {
 			log.Printf("Error fetching module details: %v", err)
 			c.JSON(http.StatusNotFound, gin.H{"error": "Module not found"})
@@ -143,10 +143,15 @@ func main() {
 
 		if moduleDetails.Vcs != nil {
 			vcsType = moduleDetails.Vcs.VcsType
-			accessToken = moduleDetails.Vcs.AccessToken
-			// TODO: Handle OAuth/App Token logic if accessToken is empty but clientId present?
-			// The original Java code has complex logic for GitHub App tokens.
-			// For this MVP, we use what we get.
+
+			// To get the accessToken, we must call the REST API: /api/v1/organization/{orgId}/vcs/{vcsId}
+			// For now, if we have an apiClient, we can implement GetVcsToken to fetch it.
+			token, err := apiClient.GetVcsToken(orgId, moduleDetails.Vcs.ID)
+			if err == nil {
+				accessToken = token
+			} else {
+				log.Printf("Warning: Failed to fetch VCS token for VCS ID %s: %v", moduleDetails.Vcs.ID, err)
+			}
 		} else if moduleDetails.Ssh != nil {
 			vcsType = "SSH~" + moduleDetails.Ssh.SshType
 			accessToken = moduleDetails.Ssh.PrivateKey

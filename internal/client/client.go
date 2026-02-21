@@ -114,3 +114,65 @@ func (c *Client) ExecuteQuery(query string, variables map[string]interface{}) ([
 
 	return graphQLResp.Data, nil
 }
+
+func (c *Client) GetVcsToken(orgId, vcsId string) (string, error) {
+	// REST API: GET /api/v1/organization/{orgId}/vcs/{vcsId}
+	base := strings.TrimSuffix(c.BaseURL, "/graphql/api/v1")
+	restURL := fmt.Sprintf("%s/api/v1/organization/%s/vcs/%s", base, orgId, vcsId)
+
+	req, err := http.NewRequest("GET", restURL, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to create request: %w", err)
+	}
+
+	if c.Token != "" {
+		secret, err := base64.RawURLEncoding.DecodeString(c.Token)
+		if err != nil {
+			secret, _ = base64.StdEncoding.DecodeString(c.Token)
+		}
+		if len(secret) > 0 {
+			claims := jwt.MapClaims{
+				"iss":            "TerrakubeInternal",
+				"sub":            "TerrakubeInternal (TOKEN)",
+				"aud":            "TerrakubeInternal",
+				"email":          "no-reply@terrakube.io",
+				"email_verified": true,
+				"name":           "TerrakubeInternal Client",
+				"iat":            time.Now().Unix(),
+				"exp":            time.Now().Add(30 * 24 * time.Hour).Unix(),
+			}
+			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+			token.Header["typ"] = "JWT"
+			signedToken, err := token.SignedString(secret)
+			if err == nil {
+				req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", signedToken))
+			}
+		}
+	}
+
+	req.Header.Set("Content-Type", "application/vnd.api+json")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("api returned status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var result struct {
+		Data struct {
+			Attributes struct {
+				AccessToken string `json:"accessToken"`
+			} `json:"attributes"`
+		} `json:"data"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	return result.Data.Attributes.AccessToken, nil
+}

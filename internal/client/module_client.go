@@ -103,7 +103,7 @@ const getModuleQuery = `
                     folder
                     tagPrefix
                     vcs {
-                        accessToken
+                        id
                         clientId
                     }
                     ssh {
@@ -124,9 +124,9 @@ type ModuleDetails struct {
 	Folder    string `json:"folder"`
 	TagPrefix string `json:"tagPrefix"`
 	Vcs       *struct {
-		VcsType     string `json:"vcsType"`
-		AccessToken string `json:"accessToken"`
-		ClientID    string `json:"clientId"`
+		ID       string `json:"id"`
+		VcsType  string `json:"vcsType"`
+		ClientID string `json:"clientId"`
 	} `json:"vcs"`
 	Ssh *struct {
 		SshType    string `json:"sshType"`
@@ -138,6 +138,7 @@ type ModuleResponse struct {
 	Organization struct {
 		Edges []struct {
 			Node struct {
+				ID     string `json:"id"`
 				Module struct {
 					Edges []struct {
 						Node ModuleDetails `json:"node"`
@@ -148,25 +149,25 @@ type ModuleResponse struct {
 	} `json:"organization"`
 }
 
-func (c *Client) GetModule(organization, module, provider string) (*ModuleDetails, error) {
+func (c *Client) GetModule(organization, module, provider string) (*ModuleDetails, string, error) {
 	query := fmt.Sprintf(getModuleQuery, organization, module, provider)
 
 	respData, err := c.ExecuteQuery(query, nil)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	var modResp ModuleResponse
 	if err := json.Unmarshal(respData, &modResp); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+		return nil, "", fmt.Errorf("failed to unmarshal response: %w", err)
 	}
 
 	// Navigate to the module node
 	for _, orgEdge := range modResp.Organization.Edges {
 		for _, modEdge := range orgEdge.Node.Module.Edges {
-			return &modEdge.Node, nil
+			return &modEdge.Node, orgEdge.Node.ID, nil
 		}
 	}
 
-	return nil, fmt.Errorf("module not found")
+	return nil, "", fmt.Errorf("module not found")
 }
